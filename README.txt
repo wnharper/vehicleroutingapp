@@ -9,12 +9,5 @@ by the size of the current table. Once the load factor exceeds a load of one, th
 The hash table uses the key value to access the corresponding object in constant time versus a list which will need to
 be iterated through and have an linear access time o(n).
 
- , A, B, C,
-A, 0
-B, 3, 0
-C, 6, 4, 0
 
-graph = {'A': {'B': 3, 'C': 6},
-         'B': {'A': 3, 'C': 4},
-         'C': {'A': 6, 'B': 4}}
 
