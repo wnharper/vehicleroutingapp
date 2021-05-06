@@ -49,6 +49,13 @@ class HashTable:
                 self.arr[h_key].remove((element_key, element_val))
         self.num_elements -= 1
 
+    # Custom iterator returns the hashtable value object
+    def __iter__(self):
+        for list in self.arr:
+            for item in list:
+                if item is not None:
+                    yield item[1]
+
     # Resize the table
     def resize_table(self, new_size):
         self.size = new_size
