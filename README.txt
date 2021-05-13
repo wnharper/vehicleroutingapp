@@ -1,3 +1,11 @@
+
+A: IDENTIFY THE ALGORITHM THAT WILL BE USED TO CREATE THE PROGRAM
+The two underlying algorithms are Dijkstra's algorithm and a nearest neighbor greedy algorithm. Dijkstra's is used to calculate the
+shortest route between two points. The greedy algorithm uses Dijkstra's in order to determine the closest neighbor and from
+that constructs a route for the truck.
+
+B1
+
 D1: EXPLANATION OF DATA STRUCTURE
 The hash table creates an array of lists which hold objects. A simple hashing function takes the key, in this case,
 a unique integer ID, and converts it into an index in order to access the list. The list is able to store multiple

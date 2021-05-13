@@ -41,19 +41,30 @@ def shortest_route(graph, start, destination):
 
 # Function uses shortest_route (Dijkstra's algorithm) to determine a route order
 # based on a greedy algorithm (next closest node)
-def calculate_route(packages, graph, start):
+def calculate_route(packages, graph):
     closest = 9999
     package_order = []
     next_package = None
+    start = 'Hub'
+
+    # Place packages to be delivered by 9am first on the route
+    for package in packages:
+        if package.deadline == '9:00 AM' or \
+                (package.deadline == '10:30 AM' and
+                 package.note == 'Delayed on flight---will not arrive to depot until 9:05 am'):
+            package.status = 'En-route'
+            package_order.append(package)
+            start = package.address
+            del packages[package.id]
 
     while packages.num_elements != 0:
-
         for package in packages:
             current_distance = shortest_route(graph, start, package.address)
             if current_distance < closest:
                 next_package = package
                 closest = current_distance
 
+        next_package.status = 'En-route'
         package_order.append(next_package)
         start = next_package.address
         closest = 9999

@@ -1,73 +1,97 @@
-import datetime
+#####################################
+#                                   #
+#       Warren Harper - C950        #
+#       Student ID: 001326657       #
+#                                   #
+#####################################
+
 from algo import *
 from data import *
 from package import *
 
+
 # Load packages into hash table from CSV file
-all_packages = load_package_data('package_file.csv')
+all_packages1 = load_package_data('package_file.csv')
 
 # Load distance data into dict from CSV file
-distance_graph = load_distance_data('distance_table.csv')
+distance_graph1 = load_distance_data('distance_table.csv')
 
 # Packages that need to be delivered by before 10:30am
-early_packages = load_early_packages(all_packages)
+early_packages1 = sort_early_packages(all_packages1)
 
 # Packages that need to be on truck 2 and leave the hub after 9:05am
-delayed_packages = load_delayed_packages(all_packages)
+delayed_packages1 = sort_delayed_packages(all_packages1)
 
-# fill truck 1 up with packages closest to package 13
-fill_truck(all_packages, early_packages, distance_graph, early_packages['15'].address)
+early_list = []
+for package in early_packages1:
+    early_list.append(package.id)
 
-# fill truck 2 up with packages closest to package 3
-fill_truck(all_packages, delayed_packages, distance_graph, delayed_packages['36'].address)
+delayed_list = []
+for package in delayed_packages1:
+    delayed_list.append(package.id)
 
-# Order packages using greedy algorithm + Dijkstra's
-truck_1 = calculate_route(early_packages, distance_graph, "Hub")
-truck_2 = calculate_route(delayed_packages, distance_graph, "Hub")
-truck_3 = calculate_route(all_packages, distance_graph, "Hub")
+best_combo = 999
 
-t1_distance = 0
-prev_destination = 'Hub'
-truck1_time = datetime.datetime(101, 1, 1, 8, 0, 0)
+for i in early_list:
+    for j in delayed_list:
+        # Load packages into hash table from CSV file
+        all_packages = load_package_data('package_file.csv')
+
+        # Load distance data into dict from CSV file
+        distance_graph = load_distance_data('distance_table.csv')
+
+        # Packages that need to be delivered by before 10:30am
+        early_packages = sort_early_packages(all_packages)
+
+        # Packages that need to be on truck 2 and leave the hub after 9:05am
+        delayed_packages = sort_delayed_packages(all_packages)
+        # fill truck 1 up with packages closest to package 13
+        fill_truck(all_packages, early_packages, distance_graph, early_packages[i].address)
+
+        # fill truck 2 up with packages closest to package 3
+        fill_truck(all_packages, delayed_packages, distance_graph, delayed_packages[j].address)
+
+        # Order packages using greedy algorithm + Dijkstra's
+        truck_1 = calculate_route(early_packages, distance_graph)
+        truck_2 = calculate_route(delayed_packages, distance_graph)
+        truck_3 = calculate_route(all_packages, distance_graph)
+
+        # deliver_packages_timed(truck_1, distance_graph, '0900', '1022')
+
+        dist1 = deliver_packages(truck_1, distance_graph, '0800')
+        dist2 = deliver_packages(truck_2, distance_graph, '0905')
+        dist3 = deliver_packages(truck_3, distance_graph, '0905')
+
+        total = dist1 + dist3 + dist2
+        if total < best_combo:
+            best_combo = total
+            print(i)
+            print(j)
+            print(total)
+
+# user_input = ""
+# while user_input != "exit":
+#
+#     print("Enter '1' to see all packages delivered, '2' to enter a time, or 'exit' to exit")
+#
+#     user_input = input("Enter 1 or 2: ")
+#
+#     if user_input == "1":
+#         deliver_packages(truck_2, distance_graph, '0900')
+#
+#     elif user_input == "2":
+#         print("Enter a time after 9am in military time to delivery up to that time (example '0935' ")
+#         user_input = input("Enter a time: ")
+#         deliver_packages_timed(truck_1, distance_graph, '0900', user_input)
+
+
+# print("Total distance travelled today:", round(t1_distance + t2_distance, 2))
+
 for package in truck_1:
-    leg_distance = shortest_route(distance_graph, prev_destination, package.address)
-    t1_distance += leg_distance
-    truck1_time = truck1_time + datetime.timedelta(hours=(leg_distance / 18))
-    print("Truck 1 has travelled", round(t1_distance, 2), "miles, and the time is", truck1_time.strftime("%H:%M:%S"))
-    prev_destination = package.address
-    package.status = "Delivered at: " + truck1_time.strftime("%H:%M:%S")
+    print("Package ID:", package.id, package.address, package.status)
 
-t1_distance += shortest_route(distance_graph, prev_destination, 'Hub')
-print("Truck 1 is back at the hub with a total distance of:", round(t1_distance, 2))
-print("")
+for package in truck_2:
+    print("Package ID:", package.id, package.address, package.status)
 
 for package in truck_3:
-    leg_distance = shortest_route(distance_graph, prev_destination, package.address)
-    t1_distance += leg_distance
-    truck1_time = truck1_time + datetime.timedelta(hours=(leg_distance / 18))
-    print("Truck 1 has travelled", round(t1_distance, 2), "miles, and the time is", truck1_time.strftime("%H:%M:%S"))
-    prev_destination = package.address
-    package.status = "Delivered at: " + truck1_time.strftime("%H:%M:%S")
-
-t1_distance += shortest_route(distance_graph, prev_destination, 'Hub')
-print("Truck 1 is back at the hub with a total distance of:", round(t1_distance, 2))
-print("")
-
-truck2_time = datetime.datetime(101, 1, 1, 9, 5, 0)
-t2_distance = 0
-for package in truck_2:
-    leg_distance = shortest_route(distance_graph, prev_destination, package.address)
-    t2_distance += leg_distance
-    truck2_time = truck2_time + datetime.timedelta(hours=(leg_distance / 18))
-    print("Truck 2 has travelled", round(t2_distance, 2), "miles, and the time is", truck2_time.strftime("%H:%M:%S"))
-    prev_destination = package.address
-    package.status = "Delivered at: " + truck2_time.strftime("%H:%M:%S")
-
-t2_distance += shortest_route(distance_graph, prev_destination, 'Hub')
-print("Truck 2 is back at the hub with a total distance of:", round(t2_distance, 2))
-print("")
-
-print("Total distance travelled today:", round(t1_distance + t2_distance, 2))
-
-for package in truck_1:
     print("Package ID:", package.id, package.address, package.status)
