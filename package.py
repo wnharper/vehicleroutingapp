@@ -88,6 +88,8 @@ def deliver_packages(truck, graph, start_time):
     return distance
 
 
+# Function takes a list of packages and calculates the distance and time taken
+# to deliver each package up to a specified time
 def deliver_packages_timed(truck, graph, start_time, end_time):
     time_input = strptime(start_time, '%H%M')
     time_end_input = strptime(end_time, '%H%M')
@@ -102,11 +104,12 @@ def deliver_packages_timed(truck, graph, start_time, end_time):
         distance += leg_distance
         time = time + datetime.timedelta(hours=(leg_distance / 18))
         if time >= time_end:
-            return
-        print("Truck has travelled", round(distance, 2), "miles, and the time is",
-              time.strftime("%H:%M:%S"))
+            return distance
+        # print("Truck has travelled", round(distance, 2), "miles, and the time is",
+        #       time.strftime("%H:%M:%S"))
         prev_destination = package.address
         package.status = "Delivered at: " + time.strftime("%H:%M:%S")
 
-    distance += shortest_route(graph, prev_destination, 'Hub')
-    print("Truck is back at the hub with a total distance of:", round(distance, 2))
+    # distance += shortest_route(graph, prev_destination, 'Hub')
+    # print("Truck is back at the hub with a total distance of:", round(distance, 2))
+    return distance
