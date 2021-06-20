@@ -1,10 +1,3 @@
-#####################################
-#                                   #
-#       Warren Harper - C950        #
-#       Student ID: 001326657       #
-#                                   #
-#####################################
-
 from algo import *
 from data import *
 from package import *
